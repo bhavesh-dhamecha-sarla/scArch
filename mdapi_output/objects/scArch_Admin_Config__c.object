@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>List</customSettingsType>
+    <description>Configuration settings for scArch Admin Center</description>
+    <enableFeeds>false</enableFeeds>
+    <label>scArch Admin Config</label>
+    <visibility>Protected</visibility>
+    <fields>
+        <fullName>Archive_Children__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Archive Child Records</description>
+        <label>Archive Child Records</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Client_ID__c</fullName>
+        <description>Client Account ID</description>
+        <externalId>false</externalId>
+        <label>Client Account ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Client_Name__c</fullName>
+        <description>Client Name</description>
+        <externalId>false</externalId>
+        <label>Client Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Client_Secret__c</fullName>
+        <description>Client Secret</description>
+        <externalId>false</externalId>
+        <label>Client Secret</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DB_Host__c</fullName>
+        <description>Database Host URL</description>
+        <externalId>false</externalId>
+        <label>Database Host URL</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DB_Name__c</fullName>
+        <description>Database Name</description>
+        <externalId>false</externalId>
+        <label>Database Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DB_Password__c</fullName>
+        <description>Database Password</description>
+        <externalId>false</externalId>
+        <label>Database Password</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DB_Port__c</fullName>
+        <description>Database Port</description>
+        <externalId>false</externalId>
+        <label>Database Port</label>
+        <length>10</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DB_User__c</fullName>
+        <description>Database User</description>
+        <externalId>false</externalId>
+        <label>Database User</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Frequency__c</fullName>
+        <description>Archive Frequency</description>
+        <externalId>false</externalId>
+        <label>Archive Frequency</label>
+        <length>50</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Is_Child__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Is Child Record</description>
+        <label>Is Child Record</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Is_Parent__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Is Parent Record</description>
+        <label>Is Parent Record</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>License_Key__c</fullName>
+        <description>AppExchange License Key</description>
+        <externalId>false</externalId>
+        <label>AppExchange License Key</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Named_Credential__c</fullName>
+        <description>Named Credential Name</description>
+        <externalId>false</externalId>
+        <label>Named Credential Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object_Name__c</fullName>
+        <description>Object API Name</description>
+        <externalId>false</externalId>
+        <label>Object API Name</label>
+        <length>100</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Parent_Object__c</fullName>
+        <description>Parent Object API Name</description>
+        <externalId>false</externalId>
+        <label>Parent Object API Name</label>
+        <length>100</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Product_Key__c</fullName>
+        <label>Product Key</label>
+        <type>Text</type>
+        <length>255</length>
+        <inlineHelpText>Product key used for registration or subscription renewal.</inlineHelpText>
+    </fields>
+    <fields>
+        <fullName>Registered_Password__c</fullName>
+        <label>Registered Password</label>
+        <type>Text</type>
+        <length>255</length>
+        <inlineHelpText>Stores the password returned by the registration service.</inlineHelpText>
+    </fields>
+    <fields>
+        <fullName>Registered_User_Id__c</fullName>
+        <label>Registered User Id</label>
+        <type>Text</type>
+        <length>255</length>
+        <inlineHelpText>Stores the userId returned by the registration service.</inlineHelpText>
+    </fields>
+    <fields>
+        <fullName>Registration_Status__c</fullName>
+        <label>Registration Status</label>
+        <type>Text</type>
+        <length>100</length>
+        <inlineHelpText>Status returned by the registration or renewal process.</inlineHelpText>
+    </fields>
+    <fields>
+        <fullName>SF_Domain__c</fullName>
+        <description>Salesforce Login Domain</description>
+        <externalId>false</externalId>
+        <label>Salesforce Login Domain</label>
+        <length>50</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SF_Token__c</fullName>
+        <description>Salesforce Password + Security Token</description>
+        <externalId>false</externalId>
+        <label>Salesforce Password + Security Token</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SF_Username__c</fullName>
+        <description>Salesforce Integration Username</description>
+        <externalId>false</externalId>
+        <label>Salesforce Integration Username</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

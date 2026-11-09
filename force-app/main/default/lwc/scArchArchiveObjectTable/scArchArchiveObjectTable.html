@@ -1,0 +1,72 @@
+<template>
+    <lightning-card title="Archived Data" icon-name="standard:record">
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-gutters_small slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                    <lightning-combobox
+                        label="Object"
+                        value={selectedObject}
+                        options={objectOptions}
+                        onchange={handleObjectChange}
+                        placeholder="Select object"
+                    ></lightning-combobox>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                    <lightning-input
+                        label="Start"
+                        type="date"
+                        value={startDate}
+                        onchange={handleStartDateChange}
+                    ></lightning-input>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                    <lightning-input
+                        label="End"
+                        type="date"
+                        value={endDate}
+                        onchange={handleEndDateChange}
+                    ></lightning-input>
+                </div>
+            </div>
+
+            <div class="slds-m-top_small">
+                <lightning-button label="Get" onclick={handleGetData}></lightning-button>
+            </div>
+
+            <template if:true={isLoading}>
+                <div class="slds-m-top_small">
+                    <lightning-spinner alternative-text="Loading records" size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:true={errorMessage}>
+                <div class="slds-text-color_error slds-m-top_small">{errorMessage}</div>
+            </template>
+
+            <template if:true={hasRows}>
+                <div class="slds-m-top_medium">
+                    <lightning-datatable
+                        key-field="Id"
+                        data={rows}
+                        columns={columns}
+                        hide-checkbox-column
+                    ></lightning-datatable>
+                </div>
+            </template>
+
+            <template if:false={hasRows}>
+                <div class="slds-m-top_small slds-text-color_weak">No records to display.</div>
+            </template>
+
+            <div class="slds-grid slds-grid_align-spread slds-m-top_small">
+                <lightning-button label="Previous" onclick={handlePrevious} disabled={notHasPrevious}></lightning-button>
+                <div class="slds-text-body_small">
+                    Page {page} • {pageSize} per page • Total rows: {totalRows}
+                </div>
+                <lightning-button label="Next" onclick={handleNext} disabled={notHasNext}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ScArchAdminController</members>
+        <members>ScArchArchiveBatch</members>
+        <members>ScArchArchiveScheduler</members>
+        <members>ScArchArchiveService</members>
+        <members>ScArchGenericDataTableController</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>scArchAdminCenter</members>
+        <members>scArchArchiveObjectTable</members>
+        <members>scArchFieldPicker</members>
+        <members>scArchGenericDataTable</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>InContact_Call_Log__c</members>
+        <members>scArch_Admin_Config__c</members>
+        <members>scArch_Archive_Configuration__c</members>
+        <name>CustomObject</name>
+    </types>
+    <version>60.0</version>
+</Package>

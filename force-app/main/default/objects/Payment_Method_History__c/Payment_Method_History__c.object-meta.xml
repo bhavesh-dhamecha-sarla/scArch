@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <nameField>
+        <displayFormat>PMH-{00000}</displayFormat>
+        <label>History ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <label>Payment Method History</label>
+    <pluralLabel>Payment Method Histories</pluralLabel>
+    <sharingModel>ControlledByParent</sharingModel>
+
+    <fields>
+        <fullName>Payment_Info__c</fullName>
+        <label>Payment Info</label>
+        <type>MasterDetail</type>
+        <referenceTo>Payment_Info__c</referenceTo>
+        <relationshipLabel>Payment Method Histories</relationshipLabel>
+        <relationshipName>Payment_Method_Histories</relationshipName>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+    </fields>
+    <fields>
+        <fullName>Old_Method__c</fullName>
+        <label>Old Method</label>
+        <type>Text</type>
+        <length>50</length>
+    </fields>
+    <fields>
+        <fullName>New_Method__c</fullName>
+        <label>New Method</label>
+        <type>Text</type>
+        <length>50</length>
+    </fields>
+    <fields>
+        <fullName>Change_Date__c</fullName>
+        <label>Change Date</label>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Changed_By__c</fullName>
+        <label>Changed By</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Reason__c</fullName>
+        <label>Reason</label>
+        <type>Text</type>
+        <length>255</length>
+    </fields>
+    <fields>
+        <fullName>Approval_Status__c</fullName>
+        <label>Approval Status</label>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <value>
+                    <fullName>Auto-Approved</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>Manual Review</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Approver_Name__c</fullName>
+        <label>Approver Name</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Old_Card_Last_4__c</fullName>
+        <label>Old Card Last 4</label>
+        <type>Text</type>
+        <length>4</length>
+    </fields>
+    <fields>
+        <fullName>New_Card_Last_4__c</fullName>
+        <label>New Card Last 4</label>
+        <type>Text</type>
+        <length>4</length>
+    </fields>
+    <fields>
+        <fullName>Old_Expiration__c</fullName>
+        <label>Old Expiration</label>
+        <type>Text</type>
+        <length>7</length>
+    </fields>
+    <fields>
+        <fullName>New_Expiration__c</fullName>
+        <label>New Expiration</label>
+        <type>Text</type>
+        <length>7</length>
+    </fields>
+    <fields>
+        <fullName>Support_Ticket__c</fullName>
+        <label>Support Ticket</label>
+        <type>Text</type>
+        <length>50</length>
+    </fields>
+    <fields>
+        <fullName>IP_Address__c</fullName>
+        <label>IP Address</label>
+        <type>Text</type>
+        <length>45</length>
+    </fields>
+    <fields>
+        <fullName>Browser_Info__c</fullName>
+        <label>Browser Info</label>
+        <type>Text</type>
+        <length>255</length>
+    </fields>
+    <fields>
+        <fullName>Device_Type__c</fullName>
+        <label>Device Type</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Location__c</fullName>
+        <label>Location</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Risk_Score__c</fullName>
+        <label>Risk Score</label>
+        <type>Number</type>
+        <precision>3</precision>
+        <scale>0</scale>
+    </fields>
+    <fields>
+        <fullName>Notes__c</fullName>
+        <label>Notes</label>
+        <type>LongTextArea</type>
+        <length>32768</length>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>External_ID__c</fullName>
+        <label>External ID</label>
+        <type>Text</type>
+        <length>50</length>
+        <externalId>true</externalId>
+        <unique>true</unique>
+    </fields>
+</CustomObject>

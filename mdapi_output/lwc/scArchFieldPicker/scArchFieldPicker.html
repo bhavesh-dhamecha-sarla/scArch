@@ -1,0 +1,11 @@
+<template>
+    <lightning-dual-listbox
+        label="Selected Fields"
+        source-label="Available Fields"
+        selected-label="Chosen Fields"
+        options={fieldOptions}
+        value={selectedFields}
+        onchange={handleFieldChange}
+        size="10"
+    ></lightning-dual-listbox>
+</template>

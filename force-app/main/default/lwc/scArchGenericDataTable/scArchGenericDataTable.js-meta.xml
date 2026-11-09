@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage,lightning__RecordPage">
+            <property name="objectName" type="String" label="Object Name" default="InContact_Call_Log__c" />
+            <property name="fieldSetName" type="String" label="Field Set API Name" default="" />
+            <property name="dateRangeJson" type="String" label="Date Range JSON" default="" />
+            <property name="sortJson" type="String" label="Sort JSON" default='[{&quot;field&quot;:&quot;Id&quot;,&quot;direction&quot;:&quot;asc&quot;}]' />
+            <property name="endpointPath" type="String" label="Endpoint Path" default="/archive/read/scArchQuery" />
+            <property name="pageSize" type="Integer" label="Page Size" default="20" />
+            <property name="title" type="String" label="Title" default="Archived Data" />
+            <property name="refresh" type="Boolean" label="Refresh on Load" default="true" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

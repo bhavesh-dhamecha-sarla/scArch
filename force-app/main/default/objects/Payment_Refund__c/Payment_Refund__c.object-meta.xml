@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <label>Payment Refund</label>
+    <nameField>
+        <displayFormat>PR-{00000}</displayFormat>
+        <label>Refund ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Payment Refunds</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+
+    <fields>
+        <fullName>Payment_Info__c</fullName>
+        <label>Payment Info</label>
+        <type>Lookup</type>
+        <referenceTo>Payment_Info__c</referenceTo>
+        <relationshipLabel>Payment Refunds</relationshipLabel>
+        <relationshipName>Payment_Refunds</relationshipName>
+    </fields>
+    <fields>
+        <fullName>Refund_Amount__c</fullName>
+        <label>Refund Amount</label>
+        <type>Currency</type>
+        <precision>16</precision>
+        <scale>2</scale>
+    </fields>
+    <fields>
+        <fullName>Refund_Date__c</fullName>
+        <label>Refund Date</label>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Reason__c</fullName>
+        <label>Reason</label>
+        <type>Text</type>
+        <length>255</length>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <label>Status</label>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <value>
+                    <fullName>Requested</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>Processed</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Gateway_Ref__c</fullName>
+        <label>Gateway Ref</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Initiated_By__c</fullName>
+        <label>Initiated By</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Approved_By__c</fullName>
+        <label>Approved By</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Approval_Date__c</fullName>
+        <label>Approval Date</label>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Bank_Name__c</fullName>
+        <label>Bank Name</label>
+        <type>Text</type>
+        <length>255</length>
+    </fields>
+    <fields>
+        <fullName>Account_Last_4__c</fullName>
+        <label>Account Last 4</label>
+        <type>Text</type>
+        <length>4</length>
+    </fields>
+    <fields>
+        <fullName>Routing_Number__c</fullName>
+        <label>Routing Number</label>
+        <type>Text</type>
+        <length>50</length>
+    </fields>
+    <fields>
+        <fullName>Refund_Type__c</fullName>
+        <label>Refund Type</label>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <value>
+                    <fullName>Partial</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Full</fullName>
+                    <default>true</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Fee_Refunded__c</fullName>
+        <label>Fee Refunded</label>
+        <type>Currency</type>
+        <precision>16</precision>
+        <scale>2</scale>
+    </fields>
+    <fields>
+        <fullName>Tax_Refunded__c</fullName>
+        <label>Tax Refunded</label>
+        <type>Currency</type>
+        <precision>16</precision>
+        <scale>2</scale>
+    </fields>
+    <fields>
+        <fullName>Net_Refund__c</fullName>
+        <label>Net Refund</label>
+        <type>Currency</type>
+        <precision>16</precision>
+        <scale>2</scale>
+    </fields>
+    <fields>
+        <fullName>Currency_Code__c</fullName>
+        <label>Currency Code</label>
+        <type>Text</type>
+        <length>3</length>
+    </fields>
+    <fields>
+        <fullName>Exchange_Rate__c</fullName>
+        <label>Exchange Rate</label>
+        <type>Number</type>
+        <precision>18</precision>
+        <scale>6</scale>
+    </fields>
+    <fields>
+        <fullName>Base_Amount__c</fullName>
+        <label>Base Amount</label>
+        <type>Currency</type>
+        <precision>16</precision>
+        <scale>2</scale>
+    </fields>
+    <fields>
+        <fullName>Processing_Time_Days__c</fullName>
+        <label>Processing Time (Days)</label>
+        <type>Number</type>
+        <precision>5</precision>
+        <scale>0</scale>
+    </fields>
+    <fields>
+        <fullName>Customer_Notified__c</fullName>
+        <label>Customer Notified</label>
+        <type>Checkbox</type>
+        <defaultValue>false</defaultValue>
+    </fields>
+    <fields>
+        <fullName>Notification_Date__c</fullName>
+        <label>Notification Date</label>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Ledger_Code__c</fullName>
+        <label>Ledger Code</label>
+        <type>Text</type>
+        <length>50</length>
+    </fields>
+    <fields>
+        <fullName>Notes__c</fullName>
+        <label>Notes</label>
+        <type>LongTextArea</type>
+        <length>32768</length>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>External_ID__c</fullName>
+        <label>External ID</label>
+        <type>Text</type>
+        <length>50</length>
+        <externalId>true</externalId>
+        <unique>true</unique>
+    </fields>
+</CustomObject>

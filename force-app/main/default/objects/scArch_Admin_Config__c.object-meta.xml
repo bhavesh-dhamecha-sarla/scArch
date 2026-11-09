@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>List</customSettingsType>
+    <description>Configuration settings for scArch Admin Center</description>
+    <enableFeeds>false</enableFeeds>
+    <label>scArch Admin Config</label>
+    <visibility>Protected</visibility>
+    <fields>
+        <fullName>Client_Name__c</fullName>
+        <label>Client Name</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Client_ID__c</fullName>
+        <label>Client ID</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Client_Secret__c</fullName>
+        <label>Client Secret</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>License_Key__c</fullName>
+        <label>License Key</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Named_Credential__c</fullName>
+        <label>Named Credential</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>DB_Host__c</fullName>
+        <label>Database Host</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>DB_Port__c</fullName>
+        <label>Database Port</label>
+        <length>10</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>DB_Name__c</fullName>
+        <label>Database Name</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>DB_User__c</fullName>
+        <label>Database User</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>DB_Password__c</fullName>
+        <label>Database Password</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>SF_Username__c</fullName>
+        <label>Salesforce Username</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>SF_Token__c</fullName>
+        <label>Salesforce Token</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>SF_Domain__c</fullName>
+        <label>Salesforce Domain</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Product_Key__c</fullName>
+        <label>Product Key</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Registration_Status__c</fullName>
+        <label>Registration Status</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Subscription_Expiry__c</fullName>
+        <label>Subscription Expiry</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Registered_User_Id__c</fullName>
+        <label>Registered User ID</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Registered_Password__c</fullName>
+        <label>Registered Password</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+</CustomObject>

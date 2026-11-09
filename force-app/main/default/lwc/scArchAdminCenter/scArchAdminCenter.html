@@ -1,0 +1,913 @@
+<template>
+  <lightning-card
+    title="scArch Admin Center"
+    icon-name="standard:service_territory_location"
+  >
+    <template if:true={isLoading}>
+      <lightning-spinner
+        alternative-text="Loading"
+        size="medium"
+      ></lightning-spinner>
+    </template>
+
+    <div class="slds-p-around_medium">
+      <lightning-tabset variant="scoped" active-tab-value={activeTab} onactive={handleTabChange}>
+        <lightning-tab
+          label="Registration Form"
+          value="registrationForm"
+          icon-name="utility:form"
+        >
+          <div class="slds-form_stacked slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Organization registration information (most fields are read-only).
+            </div>
+            
+            <!-- Organization Details Section -->
+            <div class="slds-box slds-m-bottom_medium">
+              <div class="slds-text-title_bold slds-m-bottom_small">Organization Details</div>
+              <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="Organization ID"
+                    value={orgId}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="Organization Name"
+                    value={orgName}
+                    disabled
+                  ></lightning-input>
+                </div>
+              </div>
+              <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-3">
+                  <lightning-input
+                    label="Is Production"
+                    value={isProd}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                  <lightning-input
+                    label="Instance Name"
+                    value={instanceName}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                  <lightning-input
+                    label="Language"
+                    value={language}
+                    disabled
+                  ></lightning-input>
+                </div>
+              </div>
+              <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-3">
+                  <lightning-input
+                    label="Time Zone"
+                    value={timeZone}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                  <lightning-input
+                    label="Created Date"
+                    value={createdDate}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Details Section -->
+            <div class="slds-box slds-m-bottom_medium">
+              <div class="slds-text-title_bold slds-m-bottom_small">Address Information</div>
+              <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="Country"
+                    value={country}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="State"
+                    value={state}
+                    disabled
+                  ></lightning-input>
+                </div>
+              </div>
+              <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="City"
+                    value={city}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="Postal Code"
+                    value={postalCode}
+                    disabled
+                  ></lightning-input>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Details Section -->
+            <div class="slds-box slds-m-bottom_medium">
+              <div class="slds-text-title_bold slds-m-bottom_small">Contact Information</div>
+              <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="Phone"
+                    value={phone}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="Fax"
+                    value={fax}
+                    disabled
+                  ></lightning-input>
+                </div>
+              </div>
+              <lightning-input
+                label="Website"
+                value={website}
+                disabled
+              ></lightning-input>
+            </div>
+
+            <!-- User Details Section -->
+            <div class="slds-box slds-m-bottom_medium">
+              <div class="slds-text-title_bold slds-m-bottom_small">User Information</div>
+              <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="First Name"
+                    value={firstName}
+                    disabled
+                  ></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                  <lightning-input
+                    label="Last Name"
+                    value={lastName}
+                    disabled
+                  ></lightning-input>
+                </div>
+              </div>
+              <lightning-input
+                label="Email"
+                type="email"
+                value={email}
+                onchange={handleInputChange}
+                data-field="email"
+                required
+              ></lightning-input>
+            </div>
+
+            <!-- Company Name Section -->
+            <div class="slds-box slds-m-bottom_medium">
+              <lightning-input
+                label="Company Name"
+                value={companyName}
+                disabled
+              ></lightning-input>
+            </div>
+
+            <!-- Registration Configuration Section -->
+            <div class="slds-box slds-m-bottom_medium">
+              <div class="slds-text-title_bold slds-m-bottom_small">Registration Configuration</div>
+              <lightning-input
+                label="Data Hosted in scArch"
+                type="checkbox"
+                checked={dataHostedToggle}
+                onchange={handleDataHostedToggle}
+              ></lightning-input>
+              <div class="slds-text-color_weak slds-m-top_small">
+                <template if:true={dataHostedToggle}>
+                  <span>Data will be stored in scArch PostgreSQL infrastructure</span>
+                </template>
+                <template if:false={dataHostedToggle}>
+                  <span>Data will be stored in your own company infrastructure</span>
+                </template>
+              </div>
+              <template if:true={registrationStatus}>
+                <div class="slds-m-top_medium">
+                  <div class="slds-text-title_bold slds-m-bottom_small">Registration Result</div>
+                  <lightning-input
+                    label="Product Key"
+                    value={productKey}
+                    disabled
+                  ></lightning-input>
+                  <lightning-input
+                    label="Registration Status"
+                    value={registrationStatus}
+                    disabled
+                    class="slds-m-top_small"
+                  ></lightning-input>
+                  <div class="slds-text-color_success slds-m-top_small">
+                    ✓ Organization registered successfully
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="slds-m-top_medium">
+              <lightning-button
+                label="Get Registration Token"
+                variant="brand"
+                icon-name="utility:download"
+                onclick={handleRegisterOrganization}
+              ></lightning-button>
+            </div>
+          </div>
+        </lightning-tab>
+
+        <lightning-tab
+          label="Subscription"
+          value="subscriptionRenewal"
+          icon-name="utility:refresh"
+        >
+          <div class="slds-form_stacked slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Enter your renewed subscription key to validate and renew the tenant registration.
+            </div>
+            <div class="slds-box slds-m-bottom_medium">
+              <lightning-input
+                label="Renewal Product Key"
+                value={renewalKey}
+                onchange={handleInputChange}
+                data-field="renewalKey"
+                placeholder="Enter your product key (e.g., SCARCH-XXXX-XXXX-XXXX)"
+                required
+              ></lightning-input>
+              <div class="slds-text-color_weak slds-m-top_x-small">
+                <small>Product key must be 10-255 characters containing letters, numbers, and hyphens.</small>
+              </div>
+            </div>
+            <lightning-button
+              label="Validate Renewal Key"
+              variant="brand"
+              class="slds-m-top_small"
+              onclick={handleRenewSubscription}
+              disabled={isRenewalDisabled}
+            ></lightning-button>
+            <template if:true={subscriptionExpiry}>
+              <div class="slds-form_element slds-m-top_medium">
+                <label class="slds-form-element__label" for="subscriptionExpiryValue">Subscription Valid till</label>
+                <div class="slds-form-element__control">
+                  <span id="subscriptionExpiryValue" class="slds-text-body_regular">{subscriptionExpiry}</span>
+                </div>
+              </div>
+            </template>
+            <template if:true={subscriptionStatus}>
+              <div class="slds-m-top_medium slds-box slds-theme_success">
+                <div class="slds-text-title_bold slds-m-bottom_small">Subscription Status</div>
+                <div class="slds-text-color_success">
+                  ✓ {subscriptionStatus}
+                </div>
+                <template if:true={subscriptionLicenseStatus}>
+                  <div class="slds-text-color_success slds-m-top_x-small">
+                    License status: {subscriptionLicenseStatus}
+                  </div>
+                </template>
+                <template if:true={subscriptionExpiry}>
+                  <div class="slds-text-color_success slds-m-top_x-small">
+                    Subscription Valid till: {subscriptionExpiry}
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </lightning-tab>
+
+        <lightning-tab
+          label="Client Details"
+          value="clientDetails"
+          icon-name="utility:company"
+        >
+          <div class="slds-form_stacked slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Enter the client credentials that should be used for instance registration.
+            </div>
+            <lightning-input
+              label="Client Name"
+              value={clientName}
+              onchange={handleInputChange}
+              data-field="clientName"
+            ></lightning-input>
+            <lightning-input
+              label="Client Account ID"
+              value={clientId}
+              onchange={handleClientIdInput}
+            ></lightning-input>
+            <lightning-input
+              label="Client Secret"
+              type="password"
+              value={clientSecret}
+              onchange={handleClientSecretInput}
+            ></lightning-input>
+            <lightning-button
+              label="Register Instance"
+              variant="brand"
+              class="slds-m-top_small"
+              onclick={handleRegisterInstance}
+            ></lightning-button>
+          </div>
+        </lightning-tab>
+
+        <lightning-tab
+          label="Webserver Setup"
+          value="webserverSetup"
+          icon-name="utility:server"
+        >
+          <div class="slds-form_stacked slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Configure the connection to your Python Middleware using a Named Credential.
+            </div>
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              <strong>Instructions:</strong><br/>
+              1. Go to Setup → Named Credentials<br/>
+              2. Create a new Named Credential with:<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;- URL: Your middleware API endpoint (e.g., https://api.yourdomain.com)<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;- Authentication: API Key or OAuth as needed<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;- Certificate: If required<br/>
+              3. Enter the Named Credential Name below
+            </div>
+            <lightning-input
+              label="Named Credential Name"
+              value={namedCredential}
+              onchange={handleInputChange}
+              data-field="namedCredential"
+              placeholder="My_Middleware_Credential"
+            ></lightning-input>
+            <template if:true={namedCredentialError}>
+              <div class="slds-text-color_error slds-m-top_xx-small">
+                {namedCredentialError}
+              </div>
+            </template>
+          </div>
+        </lightning-tab>
+
+        <!-- Database Setup tab hidden for now
+        <lightning-tab
+          label="Database Setup"
+          value="dbSetup"
+          icon-name="utility:database"
+        >
+          <div class="slds-form_stacked slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Configure PostgreSQL Archival Storage credentials.
+            </div>
+            <div class="slds-grid slds-gutters">
+              <div class="slds-col slds-size_2-of-3">
+                <lightning-input
+                  label="Host URL"
+                  value={dbHost}
+                  onchange={handleInputChange}
+                  data-field="dbHost"
+                ></lightning-input>
+              </div>
+              <div class="slds-col slds-size_1-of-3">
+                <lightning-input
+                  label="Port"
+                  value={dbPort}
+                  onchange={handleInputChange}
+                  data-field="dbPort"
+                  placeholder="5432"
+                ></lightning-input>
+              </div>
+            </div>
+            <lightning-input
+              label="Database Name"
+              value={dbName}
+              onchange={handleInputChange}
+              data-field="dbName"
+            ></lightning-input>
+            <lightning-input
+              label="Database User"
+              value={dbUser}
+              onchange={handleInputChange}
+              data-field="dbUser"
+            ></lightning-input>
+            <lightning-input
+              label="Database Password"
+              type="password"
+              value={dbPass}
+              onchange={handleInputChange}
+              data-field="dbPass"
+            ></lightning-input>
+          </div>
+        </lightning-tab>
+        -->
+
+        <!-- Salesforce Setup tab hidden for now
+        <lightning-tab
+          label="Salesforce Setup"
+          value="sfSetup"
+          icon-name="utility:salesforce1"
+        >
+          <div class="slds-form_stacked slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Credentials for the Integration User to read/delete data.
+            </div>
+            <lightning-input
+              label="Integration Username"
+              type="email"
+              value={sfUsername}
+              onchange={handleInputChange}
+              data-field="sfUsername"
+            ></lightning-input>
+            <lightning-input
+              label="Password + Security Token"
+              type="password"
+              value={sfToken}
+              onchange={handleInputChange}
+              data-field="sfToken"
+            ></lightning-input>
+            <lightning-combobox
+              name="sfDomain"
+              label="Login Domain"
+              value={sfDomain}
+              options={domainOptions}
+              onchange={handleInputChange}
+              data-field="sfDomain"
+            ></lightning-combobox>
+          </div>
+        </lightning-tab>
+        -->
+
+        <template if:true={showObjectDetailsTab}>
+          <lightning-tab
+            label="Object Details"
+            value="objectDetails"
+            icon-name="utility:setup_assistant_guide"
+            onactive={handleTabSelection}
+          >
+            <div class="slds-form_stacked slds-p-around_small">
+              <div class="slds-text-color_weak slds-m-bottom_medium">
+                Configure the objects to archive and their individual settings.
+              </div>
+              <div class="slds-box slds-theme_alert-texture slds-m-bottom_medium" style="background-color: #fde7e7; border-left: 4px solid #c23030; padding: 16px;">
+                <div class="slds-text-color_error slds-text-title_bold slds-m-bottom_small">
+                  <lightning-icon icon-name="utility:warning" size="small" style="margin-right: 8px;"></lightning-icon>
+                  Warning
+                </div>
+                <div class="slds-text-color_error">
+                  For master-detail relationships, if you archive a parent/master record, all child/detail records will also be deleted automatically.
+                </div>
+              </div>
+              <template for:each={objectEntries} for:item="entry">
+              <div key={entry.id} class="slds-box slds-m-bottom_small">
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-combobox
+                      label="Object"
+                      value={entry.objectName}
+                      options={objectOptions}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="objectName"
+                      required
+                      disabled={entry.isExisting}
+                    ></lightning-combobox>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-combobox
+                      label="Frequency"
+                      value={entry.frequency}
+                      options={frequencyOptions}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="frequency"
+                      required
+                      disabled={entry.isExisting}
+                    ></lightning-combobox>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3 slds-grid slds-grid_align-end slds-align-bottom">
+                    <lightning-button-icon
+                      icon-name="utility:close"
+                      alternative-text="Remove object"
+                      title="Remove object"
+                      onclick={handleRemoveObjectEntry}
+                      data-id={entry.id}
+                      disabled={entry.isExisting}
+                    ></lightning-button-icon>
+                  </div>
+                </div>
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_x-small">
+                  <div class="slds-col slds-size_1-of-1">
+                    <c-sc-arch-field-picker
+                      object-name={entry.objectName}
+                      value={entry.fieldSetName}
+                      onchange={handleFieldSelectionChange}
+                      data-id={entry.id}
+                      disabled={entry.isExisting}
+                    ></c-sc-arch-field-picker>
+                  </div>
+                </div>
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                      type="checkbox"
+                      label="Is Parent Record?"
+                      checked={entry.isParent}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="isParent"
+                      disabled={entry.isExisting}
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                      type="checkbox"
+                      label="Archive Child Records (Deep Archive)"
+                      checked={entry.archiveChildren}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="archiveChildren"
+                      disabled={entry.isExisting}
+                    ></lightning-input>
+                  </div>
+                </div>
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                      type="checkbox"
+                      label="Has Documents?"
+                      checked={entry.hasDocuments}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="hasDocuments"
+                      disabled={entry.isExisting}
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                      type="date"
+                      label="First Date of Archive"
+                      value={entry.firstArchiveDate}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="firstArchiveDate"
+                      disabled={entry.isExisting}
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                      type="date"
+                      label="Last Date of Archive"
+                      value={entry.lastArchiveDate}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="lastArchiveDate"
+                      disabled={entry.isExisting}
+                    ></lightning-input>
+                  </div>
+                </div>
+                <template if:true={entry.archiveChildren}>
+                  <div class="slds-m-top_small">
+                    <div class="slds-text-color_weak slds-m-bottom_small">
+                      Select related objects to archive along with this object:
+                    </div>
+                    <template if:true={entry.loadingRelatedObjects}>
+                      <lightning-spinner
+                        alternative-text="Loading related objects"
+                        size="small"
+                      ></lightning-spinner>
+                    </template>
+                    <template if:false={entry.loadingRelatedObjects}>
+                      <lightning-dual-listbox
+                        name="relatedObjects"
+                        label="Related Objects"
+                        source-label="Available"
+                        selected-label="Selected"
+                        options={entry.relatedObjects}
+                        value={entry.selectedRelatedObjects}
+                        onchange={handleRelatedObjectChange}
+                        data-id={entry.id}
+                        size="10"
+                        disabled={entry.isExisting}
+                      ></lightning-dual-listbox>
+                      <template if:true={entry.hasNoRelatedObjects}>
+                        <div class="slds-text-color_weak">
+                          No related objects found for this object.
+                        </div>
+                      </template>
+                    </template>
+                  </div>
+                </template>
+              </div>
+            </template>
+              <lightning-button
+                label="Add Object"
+                variant="neutral"
+                onclick={handleAddObjectEntry}
+              ></lightning-button>
+            </div>
+          </lightning-tab>
+        </template>
+
+        <lightning-tab
+          label="Quick Schedule"
+          value="quickSchedule"
+          icon-name="utility:quick_text"
+          onactive={handleTabSelection}
+        >
+          <div class="slds-form_stacked slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Create a lightweight archive schedule without field selection or child-object configuration.
+            </div>
+            <div class="slds-box slds-theme_alert-texture slds-m-bottom_medium" style="background-color: #fde7e7; border-left: 4px solid #c23030; padding: 16px;">
+              <div class="slds-text-color_error slds-text-title_bold slds-m-bottom_small">
+                <lightning-icon icon-name="utility:warning" size="small" style="margin-right: 8px;"></lightning-icon>
+                Warning
+              </div>
+              <div class="slds-text-color_error">
+                For master-detail relationships, if you archive a parent/master record, all child/detail records will also be deleted automatically.
+              </div>
+            </div>
+
+            <template for:each={objectEntries} for:item="entry">
+              <div key={entry.id} class="slds-box slds-m-bottom_small">
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-combobox
+                      label="Object"
+                      value={entry.objectName}
+                      options={entry.objectOptions}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="objectName"
+                      required
+                    ></lightning-combobox>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-combobox
+                      label="Frequency"
+                      value={entry.frequency}
+                      options={frequencyOptions}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="frequency"
+                      required
+                    ></lightning-combobox>
+                  </div>
+                </div>
+
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                      type="date"
+                      label="First Date of Archive"
+                      value={entry.firstArchiveDate}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="firstArchiveDate"
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                      type="date"
+                      label="Last Date of Archive"
+                      value={entry.lastArchiveDate}
+                      onchange={handleObjectEntryChange}
+                      data-id={entry.id}
+                      data-field="lastArchiveDate"
+                    ></lightning-input>
+                  </div>
+                </div>
+
+                <div class="slds-m-top_small">
+                  <lightning-input
+                    type="checkbox"
+                    label="Archive Child Records"
+                    checked={entry.archiveChildren}
+                    onchange={handleObjectEntryChange}
+                    data-id={entry.id}
+                    data-field="archiveChildren"
+                  ></lightning-input>
+                </div>
+                <template if:true={entry.archiveChildren}>
+                  <div class="slds-m-top_small">
+                    <lightning-dual-listbox
+                      data-id={entry.id}
+                      name="relatedObjectsMaster"
+                      label="Master-Detail Related Objects"
+                      source-label="Available"
+                      selected-label="Selected"
+                      options={entry.relatedObjects}
+                      value={entry.selectedRelatedObjectsMaster}
+                      onchange={handleQuickScheduleRelatedMasterChange}
+                      size="8"
+                    ></lightning-dual-listbox>
+                  </div>
+                  <div class="slds-m-top_small">
+                    <lightning-dual-listbox
+                      data-id={entry.id}
+                      name="relatedObjectsLookup"
+                      label="Lookup Related Objects"
+                      source-label="Available"
+                      selected-label="Selected"
+                      options={entry.relatedLookupObjects}
+                      value={entry.selectedRelatedObjectsLookup}
+                      onchange={handleQuickScheduleRelatedLookupChange}
+                      size="8"
+                    ></lightning-dual-listbox>
+                  </div>
+                </template>
+              </div>
+            </template>
+
+            <lightning-button
+              label="Add Object"
+              variant="neutral"
+              onclick={handleAddObjectEntry}
+            ></lightning-button>
+          </div>
+        </lightning-tab>
+
+        <lightning-tab
+          label="Scheduled Jobs"
+          value="scheduledJobs"
+          icon-name="utility:clock"
+        >
+          <div class="slds-p-around_small">
+            <div class="slds-text-color_weak slds-m-bottom_medium">
+              Jobs configured from the schedule settings above.
+            </div>
+
+            <template if:false={isAdminConfigLoaded}>
+              <lightning-spinner alternative-text="Loading scheduled jobs" size="small"></lightning-spinner>
+            </template>
+
+            <template if:true={isAdminConfigLoaded}>
+              <template if:true={scheduledJobs.length}>
+                <lightning-datatable
+                  key-field="id"
+                  data={scheduledJobs}
+                  columns={scheduledJobColumns}
+                  onrowaction={handleScheduledJobRowAction}
+                >
+                </lightning-datatable>
+              </template>
+
+              <template if:false={scheduledJobs.length}>
+                <div class="slds-box slds-theme_shade slds-p-around_medium">
+                  No jobs are configured yet. Create a schedule entry on the Schedule Jobs tab.
+                </div>
+              </template>
+            </template>
+          </div>
+        </lightning-tab>
+      </lightning-tabset>
+
+      <template if:true={showEditModal}>
+        <section key={editModalRenderToken} role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+          <div class="slds-modal__container">
+            <header class="slds-modal__header">
+              <h2 class="slds-text-heading_medium">Edit Scheduled Job</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium">
+              <template if:true={editModalEntry}>
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-combobox
+                      label="Object"
+                      value={editModalEntry.objectName}
+                      options={objectOptions}
+                      data-field="objectName"
+                      onchange={handleEditModalChange}
+                    ></lightning-combobox>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-combobox
+                      label="Frequency"
+                      value={editModalEntry.frequency}
+                      options={frequencyOptions}
+                      data-field="frequency"
+                      onchange={handleEditModalChange}
+                    ></lightning-combobox>
+                  </div>
+                </div>
+
+                <div class="slds-m-top_small">
+                  <c-sc-arch-field-picker
+                    object-name={editModalEntry.objectName}
+                    value={editModalEntry.fieldSetName}
+                    data-field="fieldSetName"
+                    onchange={handleEditModalFieldSelectionChange}
+                  ></c-sc-arch-field-picker>
+                </div>
+
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                      type="checkbox"
+                      label="Is Parent Record?"
+                      checked={editModalEntry.isParent}
+                      data-field="isParent"
+                      onchange={handleEditModalChange}
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                      type="checkbox"
+                      label="Archive Child Records"
+                      checked={editModalEntry.archiveChildren}
+                      data-field="archiveChildren"
+                      onchange={handleEditModalChange}
+                    ></lightning-input>
+                  </div>
+                </div>
+
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                      type="checkbox"
+                      label="Has Documents?"
+                      checked={editModalEntry.hasDocuments}
+                      data-field="hasDocuments"
+                      onchange={handleEditModalChange}
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                      type="date"
+                      label="First Date of Archive"
+                      value={editModalEntry.firstArchiveDate}
+                      data-field="firstArchiveDate"
+                      onchange={handleEditModalChange}
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                      type="date"
+                      label="Last Date of Archive"
+                      value={editModalEntry.lastArchiveDate}
+                      data-field="lastArchiveDate"
+                      onchange={handleEditModalChange}
+                    ></lightning-input>
+                  </div>
+                </div>
+
+                <template if:true={editModalEntry.archiveChildren}>
+                  <div class="slds-m-top_small">
+                    <lightning-dual-listbox
+                      name="editRelatedObjects"
+                      label="Related Objects"
+                      source-label="Available"
+                      selected-label="Selected"
+                      options={editModalEntry.relatedObjects}
+                      value={editModalEntry.selectedRelatedObjects}
+                      onchange={handleEditModalRelatedObjectChange}
+                      size="10"
+                    ></lightning-dual-listbox>
+                  </div>
+                </template>
+              </template>
+            </div>
+            <footer class="slds-modal__footer">
+              <lightning-button label="Cancel" onclick={closeEditModal}></lightning-button>
+              <lightning-button label="Save" variant="brand" onclick={handleSaveEditedJob}></lightning-button>
+            </footer>
+          </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+      </template>
+
+      <div
+        class="slds-m-top_large slds-text-align_center slds-border_top slds-p-top_medium"
+      >
+        <template if:true={isObjectDetailsTab}>
+          <lightning-button
+            label="Save Object Details"
+            variant="brand"
+            icon-name="utility:save"
+            onclick={handleObjectDetailSave}
+          ></lightning-button>
+        </template>
+
+        <template if:true={isQuickScheduleTab}>
+          <lightning-button
+            label="Save Quick Schedule"
+            variant="brand"
+            icon-name="utility:save"
+            onclick={handleQuickScheduleSave}
+          ></lightning-button>
+        </template>
+      </div>
+    </div>
+  </lightning-card>
+</template>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Stores individual transaction records for a Payment.</description>
+    <nameField>
+        <displayFormat>PT-{00000}</displayFormat>
+        <label>Transaction ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <label>Payment Transaction</label>
+    <pluralLabel>Payment Transactions</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+
+    <!-- 1. Lookup Relationship to Payment_Info__c -->
+    <fields>
+        <fullName>Payment_Info__c</fullName>
+        <label>Payment Info</label>
+        <type>Lookup</type>
+        <referenceTo>Payment_Info__c</referenceTo>
+        <relationshipLabel>Payment Transactions</relationshipLabel>
+        <relationshipName>Payment_Transactions</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 2. Transaction Date -->
+    <fields>
+        <fullName>Transaction_Date__c</fullName>
+        <label>Transaction Date</label>
+        <type>DateTime</type>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 3. Transaction Amount -->
+    <fields>
+        <fullName>Transaction_Amount__c</fullName>
+        <label>Transaction Amount</label>
+        <type>Currency</type>
+        <precision>16</precision>
+        <scale>2</scale>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 4. Gateway Code -->
+    <fields>
+        <fullName>Gateway_Code__c</fullName>
+        <label>Gateway Code</label>
+        <type>Text</type>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 5. Transaction Status -->
+    <fields>
+        <fullName>Transaction_Status__c</fullName>
+        <label>Transaction Status</label>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Success</fullName><default>false</default></value>
+                <value><fullName>Failed</fullName><default>false</default></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+</CustomObject>

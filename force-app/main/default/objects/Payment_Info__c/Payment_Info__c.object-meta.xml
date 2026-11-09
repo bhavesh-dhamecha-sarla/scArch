@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Stores main payment information and billing details.</description>
+    <nameField>
+        <displayFormat>PI-{00000}</displayFormat>
+        <label>Payment Info Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <label>Payment Info</label>
+    <pluralLabel>Payment Infos</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+
+    <!-- 1. Account Name -->
+    <fields>
+        <fullName>Account_Name__c</fullName>
+        <label>Account Name</label>
+        <type>Text</type>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 2. Payment Method -->
+    <fields>
+        <fullName>Payment_Method__c</fullName>
+        <label>Payment Method</label>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Card</fullName><default>true</default></value>
+                <value><fullName>ACH</fullName><default>false</default></value>
+                <value><fullName>Wire</fullName><default>false</default></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+
+    <!-- 3. Card Type -->
+    <fields>
+        <fullName>Card_Type__c</fullName>
+        <label>Card Type</label>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Visa</fullName><default>false</default></value>
+                <value><fullName>MC</fullName><default>false</default></value>
+                <value><fullName>Amex</fullName><default>false</default></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+
+    <!-- 4. Card Last 4 -->
+    <fields>
+        <fullName>Card_Last_4__c</fullName>
+        <label>Card Last 4</label>
+        <type>Text</type>
+        <length>4</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 5. Expiration Month -->
+    <fields>
+        <fullName>Expiration_Month__c</fullName>
+        <label>Expiration Month</label>
+        <type>Number</type>
+        <precision>2</precision>
+        <scale>0</scale>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 6. Expiration Year -->
+    <fields>
+        <fullName>Expiration_Year__c</fullName>
+        <label>Expiration Year</label>
+        <type>Number</type>
+        <precision>4</precision>
+        <scale>0</scale>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 7. Billing Street -->
+    <fields>
+        <fullName>Billing_Street__c</fullName>
+        <label>Billing Street</label>
+        <type>TextArea</type>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 8. Billing City -->
+    <fields>
+        <fullName>Billing_City__c</fullName>
+        <label>Billing City</label>
+        <type>Text</type>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 9. Billing State -->
+    <fields>
+        <fullName>Billing_State__c</fullName>
+        <label>Billing State</label>
+        <type>Text</type>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 10. Billing Postal Code -->
+    <fields>
+        <fullName>Billing_Postal_Code__c</fullName>
+        <label>Billing Postal Code</label>
+        <type>Text</type>
+        <length>20</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 11. Billing Country -->
+    <fields>
+        <fullName>Billing_Country__c</fullName>
+        <label>Billing Country</label>
+        <type>Text</type>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 12. Status -->
+    <fields>
+        <fullName>Status__c</fullName>
+        <label>Status</label>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Active</fullName><default>true</default></value>
+                <value><fullName>Inactive</fullName><default>false</default></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+
+    <!-- 13. Total Amount -->
+    <fields>
+        <fullName>Total_Amount__c</fullName>
+        <label>Total Amount</label>
+        <type>Currency</type>
+        <precision>16</precision>
+        <scale>2</scale>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 14. Last Transaction -->
+    <fields>
+        <fullName>Last_Transaction__c</fullName>
+        <label>Last Transaction Date</label>
+        <type>Date</type>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+    </fields>
+
+    <!-- 15. External ID -->
+    <fields>
+        <fullName>External_ID__c</fullName>
+        <label>External ID</label>
+        <type>Text</type>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <externalId>true</externalId>
+        <unique>true</unique>
+    </fields>
+</CustomObject>

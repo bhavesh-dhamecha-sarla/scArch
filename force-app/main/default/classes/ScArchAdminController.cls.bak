@@ -1,0 +1,561 @@
+public with sharing class ScArchAdminController {
+    public class ObjectOption implements Comparable {
+        @AuraEnabled public String label { get; set; }
+        @AuraEnabled public String value { get; set; }
+
+        public ObjectOption(String label, String value) {
+            this.label = label;
+            this.value = value;
+        }
+
+        public Integer compareTo(Object obj) {
+            ObjectOption other = (ObjectOption) obj;
+            return String.valueOf(label).toLowerCase().compareTo(String.valueOf(other.label).toLowerCase());
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<ObjectOption> getAllObjectOptions() {
+        Map<String, Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
+        List<ObjectOption> options = new List<ObjectOption>();
+
+        for (Schema.SObjectType sobjectType : globalDescribe.values()) {
+            Schema.DescribeSObjectResult describe = sobjectType.getDescribe();
+            if (!describe.isQueryable() || describe.isDeprecatedAndHidden() || describe.isCustomSetting()) {
+                continue;
+            }
+
+            String label = describe.getLabel();
+            if (String.isBlank(label) || label.contains('__MISSING LABEL__') || label.contains('not found in section')) {
+                label = describe.getName();
+            }
+
+            options.add(new ObjectOption(label, describe.getName()));
+        }
+
+        options.sort();
+        return options;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<ObjectOption> getRelatedObjects(String objectName) {
+        if (String.isBlank(objectName)) {
+            return new List<ObjectOption>();
+        }
+
+        Map<String, Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
+        if (!globalDescribe.containsKey(objectName)) {
+            return new List<ObjectOption>();
+        }
+
+        Schema.DescribeSObjectResult describe = globalDescribe.get(objectName).getDescribe();
+        List<Schema.ChildRelationship> childRelationships = describe.getChildRelationships();
+        List<ObjectOption> relatedOptions = new List<ObjectOption>();
+
+        for (Schema.ChildRelationship childRel : childRelationships) {
+            // Only treat child as master-detail relationship for archive child selection
+            if (!childRel.isCascadeDelete()) {
+                continue;
+            }
+
+            Schema.DescribeSObjectResult childDescribe = childRel.getChildSObject().getDescribe();
+            
+            // Skip if not queryable or deprecated
+            if (!childDescribe.isQueryable() || childDescribe.isDeprecatedAndHidden()) {
+                continue;
+            }
+
+            String label = childDescribe.getLabel();
+            if (String.isBlank(label) || label.contains('__MISSING LABEL__')) {
+                label = childDescribe.getName();
+            }
+
+            relatedOptions.add(new ObjectOption(label, childDescribe.getName()));
+        }
+
+        relatedOptions.sort();
+        return relatedOptions;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static Boolean validateNamedCredential(String credentialName) {
+        if (String.isBlank(credentialName)) {
+            return true;
+        }
+
+        try {
+            List<SObject> results = [
+                SELECT DeveloperName 
+                FROM NamedCredential 
+                WHERE DeveloperName = :credentialName 
+                LIMIT 1
+            ];
+            return !results.isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static Map<String, Object> getAdminConfiguration() {
+        Map<String, Object> result = new Map<String, Object>();
+
+        // Get main configuration from custom settings - stores admin config data
+        scArch_Admin_Config__c mainSetting = scArch_Admin_Config__c.getInstance('Default');
+        if (mainSetting != null) {
+            result.put('clientName', mainSetting.Client_Name__c);
+            result.put('clientId', mainSetting.Client_ID__c);
+            result.put('licenseKey', mainSetting.License_Key__c);
+            result.put('namedCredential', mainSetting.Named_Credential__c);
+            result.put('dbHost', mainSetting.DB_Host__c);
+            result.put('dbPort', mainSetting.DB_Port__c);
+            result.put('dbName', mainSetting.DB_Name__c);
+            result.put('dbUser', mainSetting.DB_User__c);
+            result.put('dbPass', mainSetting.DB_Password__c);
+            result.put('sfUsername', mainSetting.SF_Username__c);
+            result.put('sfToken', mainSetting.SF_Token__c);
+            result.put('sfDomain', mainSetting.SF_Domain__c);
+            result.put('productKey', mainSetting.Product_Key__c);
+            result.put('registrationStatus', mainSetting.Registration_Status__c);
+            result.put('subscriptionExpiry', mainSetting.Subscription_Expiry__c);
+        }
+
+        // Get object configurations from archive configuration records
+        List<scArch_Archive_Configuration__c> objectSettings = [
+            SELECT Object_Name__c, Archive_Frequency__c, Is_Parent__c, Archive_Children__c, Parent_Object__c,
+                   Has_Documents__c, First_Archive_Date__c, Last_Archive_Date__c
+            FROM scArch_Archive_Configuration__c
+            WHERE Object_Name__c != null
+            ORDER BY Name
+        ];
+
+        // Group by parent object to reconstruct the entries
+        Map<String, List<scArch_Archive_Configuration__c>> parentToChildren = new Map<String, List<scArch_Archive_Configuration__c>>();
+        Map<String, scArch_Archive_Configuration__c> parentObjects = new Map<String, scArch_Archive_Configuration__c>();
+
+        for (scArch_Archive_Configuration__c setting : objectSettings) {
+            if (setting.Is_Parent__c) {
+                parentObjects.put(setting.Object_Name__c, setting);
+                parentToChildren.put(setting.Object_Name__c, new List<scArch_Archive_Configuration__c>());
+            } else if (setting.Parent_Object__c != null) {
+                if (!parentToChildren.containsKey(setting.Parent_Object__c)) {
+                    parentToChildren.put(setting.Parent_Object__c, new List<scArch_Archive_Configuration__c>());
+                }
+                parentToChildren.get(setting.Parent_Object__c).add(setting);
+            }
+        }
+
+        // Build object entries
+        List<Map<String, Object>> objectEntries = new List<Map<String, Object>>();
+        for (String parentObjectName : parentObjects.keySet()) {
+            scArch_Archive_Configuration__c parentSetting = parentObjects.get(parentObjectName);
+            List<scArch_Archive_Configuration__c> childSettings = parentToChildren.get(parentObjectName);
+
+            Map<String, Object> entry = new Map<String, Object>();
+            entry.put('objectName', parentSetting.Object_Name__c);
+            entry.put('frequency', parentSetting.Archive_Frequency__c);
+            entry.put('isParent', parentSetting.Is_Parent__c);
+            entry.put('archiveChildren', parentSetting.Archive_Children__c);
+            entry.put('hasDocuments', parentSetting.Has_Documents__c);
+            entry.put('firstArchiveDate', parentSetting.First_Archive_Date__c);
+            entry.put('lastArchiveDate', parentSetting.Last_Archive_Date__c);
+
+            // Collect selected related objects
+            List<String> selectedRelatedObjects = new List<String>();
+            for (scArch_Archive_Configuration__c childSetting : childSettings) {
+                selectedRelatedObjects.add(childSetting.Object_Name__c);
+            }
+            entry.put('selectedRelatedObjects', selectedRelatedObjects);
+
+            objectEntries.add(entry);
+        }
+
+        result.put('objectEntries', objectEntries);
+        return result;
+    }
+
+    @AuraEnabled
+    public static Boolean saveAdminConfiguration(String configJson) {
+        try {
+            Map<String, Object> config = (Map<String, Object>) JSON.deserializeUntyped(configJson);
+
+            // Load existing archive configuration records for object detail preservation
+            Map<String, scArch_Archive_Configuration__c> existingObjectConfigsByName = new Map<String, scArch_Archive_Configuration__c>();
+            for (scArch_Archive_Configuration__c existingConfig : [
+                SELECT Id, Name, Object_Name__c, Parent_Object__c, Is_Parent__c
+                FROM scArch_Archive_Configuration__c
+                WHERE Object_Name__c != null
+            ]) {
+                existingObjectConfigsByName.put(existingConfig.Name, existingConfig);
+            }
+
+            // Save the main configuration (client, DB, SF settings)
+            scArch_Admin_Config__c mainSetting = scArch_Admin_Config__c.getInstance('Default');
+            if (mainSetting == null) {
+                mainSetting = new scArch_Admin_Config__c(Name = 'Default');
+            }
+
+            mainSetting.Named_Credential__c = (String) config.get('namedCredential');
+            mainSetting.DB_Host__c = (String) config.get('dbHost');
+            mainSetting.DB_Port__c = (String) config.get('dbPort');
+            mainSetting.DB_Name__c = (String) config.get('dbName');
+            mainSetting.DB_User__c = (String) config.get('dbUser');
+            mainSetting.DB_Password__c = (String) config.get('dbPass');
+            mainSetting.SF_Username__c = (String) config.get('sfUsername');
+            mainSetting.SF_Token__c = (String) config.get('sfToken');
+            mainSetting.SF_Domain__c = (String) config.get('sfDomain');
+            mainSetting.Product_Key__c = (String) config.get('productKey');
+
+            upsert mainSetting;
+
+            // Process object entries
+            List<scArch_Archive_Configuration__c> objectSettingsToInsert = new List<scArch_Archive_Configuration__c>();
+            List<scArch_Archive_Configuration__c> objectSettingsToUpdate = new List<scArch_Archive_Configuration__c>();
+            List<Object> objectEntries = (List<Object>) config.get('objectEntries');
+
+            if (objectEntries != null) {
+                for (Object entryObj : objectEntries) {
+                    Map<String, Object> entry = (Map<String, Object>) entryObj;
+                    String objectName = (String) entry.get('objectName');
+                    if (String.isBlank(objectName)) {
+                        continue;
+                    }
+
+                    String frequency = (String) entry.get('frequency');
+                    Boolean isParent = (Boolean) entry.get('isParent');
+                    Boolean archiveChildren = (Boolean) entry.get('archiveChildren');
+                    Boolean hasDocuments = (Boolean) entry.get('hasDocuments');
+                    Object firstArchiveDateObj = entry.get('firstArchiveDate');
+                    Object lastArchiveDateObj = entry.get('lastArchiveDate');
+                    List<Object> selectedRelatedObjects = (List<Object>) entry.get('selectedRelatedObjects');
+
+                    Date firstArchiveDateValue;
+                    Datetime lastArchiveDateValue;
+
+                    if (firstArchiveDateObj instanceof Date) {
+                        firstArchiveDateValue = (Date) firstArchiveDateObj;
+                    } else if (firstArchiveDateObj instanceof String && !String.isBlank((String) firstArchiveDateObj)) {
+                        firstArchiveDateValue = Date.valueOf((String) firstArchiveDateObj);
+                    }
+
+                    if (lastArchiveDateObj instanceof Datetime) {
+                        lastArchiveDateValue = (Datetime) lastArchiveDateObj;
+                    } else if (lastArchiveDateObj instanceof Date) {
+                        lastArchiveDateValue = Datetime.newInstance((Date) lastArchiveDateObj, Time.newInstance(0, 0, 0, 0));
+                    } else if (lastArchiveDateObj instanceof String && !String.isBlank((String) lastArchiveDateObj)) {
+                        lastArchiveDateValue = Datetime.newInstance(Date.valueOf((String) lastArchiveDateObj), Time.newInstance(0, 0, 0, 0));
+                    }
+
+                    // Create parent archive configuration record
+                    scArch_Archive_Configuration__c parentSetting = new scArch_Archive_Configuration__c();
+                    parentSetting.Name = objectName + '_Parent';
+                    parentSetting.Object_Name__c = objectName;
+                    parentSetting.Archive_Frequency__c = frequency;
+                    parentSetting.Is_Parent__c = isParent == true;
+                    parentSetting.Archive_Children__c = archiveChildren;
+                    parentSetting.Has_Documents__c = hasDocuments == true;
+                    parentSetting.put('First_Archive_Date__c', firstArchiveDateValue);
+                    parentSetting.put('Last_Archive_Date__c', lastArchiveDateValue);
+                    parentSetting.Has_Child_Records__c = selectedRelatedObjects != null && !selectedRelatedObjects.isEmpty();
+
+                    String parentRecordName = parentSetting.Name;
+                    if (existingObjectConfigsByName.containsKey(parentRecordName)) {
+                        scArch_Archive_Configuration__c existingParent = existingObjectConfigsByName.remove(parentRecordName);
+                        parentSetting.Id = existingParent.Id;
+                        objectSettingsToUpdate.add(parentSetting);
+                    } else {
+                        objectSettingsToInsert.add(parentSetting);
+                    }
+
+                    // Create child archive configuration records if any are selected
+                    if (selectedRelatedObjects != null && !selectedRelatedObjects.isEmpty()) {
+                        for (Object relatedObj : selectedRelatedObjects) {
+                            String relatedObjectName = (String) relatedObj;
+                            scArch_Archive_Configuration__c childSetting = new scArch_Archive_Configuration__c();
+                            childSetting.Name = objectName + '_' + relatedObjectName + '_Child';
+                            childSetting.Object_Name__c = relatedObjectName;
+                            childSetting.Archive_Frequency__c = frequency;
+                            childSetting.Is_Parent__c = false;
+                            childSetting.Archive_Children__c = false;
+                            childSetting.Has_Documents__c = hasDocuments == true;
+                            childSetting.put('First_Archive_Date__c', firstArchiveDateValue);
+                            childSetting.put('Last_Archive_Date__c', lastArchiveDateValue);
+                            childSetting.Has_Child_Records__c = false;
+                            childSetting.Parent_Object__c = objectName;
+
+                            String childRecordName = childSetting.Name;
+                            if (existingObjectConfigsByName.containsKey(childRecordName)) {
+                                scArch_Archive_Configuration__c existingChild = existingObjectConfigsByName.remove(childRecordName);
+                                childSetting.Id = existingChild.Id;
+                                objectSettingsToUpdate.add(childSetting);
+                            } else {
+                                objectSettingsToInsert.add(childSetting);
+                            }
+                        }
+                    }
+                }
+            }
+
+            List<scArch_Archive_Configuration__c> objectSettingsToDelete = new List<scArch_Archive_Configuration__c>(existingObjectConfigsByName.values());
+
+            if (!objectSettingsToDelete.isEmpty()) {
+                delete objectSettingsToDelete;
+            }
+            if (!objectSettingsToInsert.isEmpty()) {
+                insert objectSettingsToInsert;
+            }
+            if (!objectSettingsToUpdate.isEmpty()) {
+                update objectSettingsToUpdate;
+            }
+
+            return true;
+        } catch (Exception e) {
+            throw new AuraHandledException('Failed to save configuration: ' + e.getMessage());
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static Map<String, Object> getCompanyInformation() {
+        Map<String, Object> result = new Map<String, Object>();
+
+        try {
+            // Get organization information
+            Organization org = [
+                SELECT Id, Name, IsSandbox, InstanceName, Country, City, State, PostalCode, 
+                       Phone, Fax, LanguageLocaleKey, TimeZoneSidKey, CreatedDate
+                FROM Organization
+                LIMIT 1
+            ];
+
+            result.put('orgId', org.Id);
+            result.put('orgName', org.Name);
+            result.put('isProd', !org.IsSandbox);
+            result.put('instanceName', org.InstanceName);
+            result.put('country', org.Country);
+            result.put('state', org.State);
+            result.put('city', org.City);
+            result.put('postalCode', org.PostalCode);
+            result.put('phone', org.Phone);
+            result.put('fax', org.Fax);
+            result.put('language', org.LanguageLocaleKey);
+            result.put('timeZone', org.TimeZoneSidKey);
+            result.put('createdDate', org.CreatedDate);
+
+            // Get current user information
+            User currentUser = [
+                SELECT Id, FirstName, LastName, Email
+                FROM User
+                WHERE Id = :UserInfo.getUserId()
+                LIMIT 1
+            ];
+
+            result.put('firstName', currentUser.FirstName);
+            result.put('lastName', currentUser.LastName);
+            result.put('email', currentUser.Email);
+
+        } catch (Exception e) {
+            System.debug('Error fetching company information: ' + e.getMessage());
+            result.put('error', e.getMessage());
+        }
+
+        return result;
+    }
+
+    @AuraEnabled
+    public static Map<String, Object> registerOrg(String firstName, String lastName, String email, Boolean dataHosted, String companyName, String companyTimeZone) {
+        try {
+            Organization org = [SELECT Id, IsSandbox, Name FROM Organization LIMIT 1];
+            scArch_Admin_Config__c mainSetting = scArch_Admin_Config__c.getInstance('Default');
+            String namedCredential = mainSetting != null ? mainSetting.Named_Credential__c : null;
+
+            if (String.isBlank(namedCredential)) {
+                throw new AuraHandledException('Named Credential must be configured before registration.');
+            }
+
+            Map<String, Object> payload = new Map<String, Object>{
+                'orgId' => org.Id,
+                'isProd' => !org.IsSandbox,
+                'firstName' => firstName,
+                'lastName' => lastName,
+                'email' => email,
+                'dataHosted' => dataHosted,
+                'companyName' => companyName,
+                'companyTimeZone' => companyTimeZone
+            };
+
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint('callout:' + namedCredential + '/init/scarchregistration');
+            request.setMethod('POST');
+            request.setHeader('Content-Type', 'application/json');
+            request.setBody(JSON.serialize(payload));
+
+            Http http = new Http();
+            HttpResponse response = http.send(request);
+
+            if (response.getStatusCode() < 200 || response.getStatusCode() >= 300) {
+                throw new AuraHandledException('Registration call failed with status ' + response.getStatusCode());
+            }
+
+            Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+
+            if (responseBody == null || !responseBody.containsKey('code')) {
+                throw new AuraHandledException('Invalid response from registration API.');
+            }
+
+            String code = (String) responseBody.get('code');
+            String message = (String) responseBody.get('message');
+            Object dataObj = responseBody.get('data');
+
+            if (code == null || !code.startsWith('REG-') || dataObj == null) {
+                String errMsg = message != null && message.length() > 0 ? message : 'Registration failed: ' + code;
+                throw new AuraHandledException(errMsg);
+            }
+
+            Map<String, Object> data = (Map<String, Object>) dataObj;
+            Map<String, Object> credentials = (Map<String, Object>) data.get('credentials');
+
+            if (credentials == null || credentials.get('userId') == null || credentials.get('password') == null) {
+                throw new AuraHandledException('Registration response did not include credentials.');
+            }
+
+            String userId = (String) credentials.get('userId');
+            String password = (String) credentials.get('password');
+            String productKey = data.containsKey('productKey') ? (String) data.get('productKey') : '';
+            String instanceId = data.containsKey('instanceId') ? (String) data.get('instanceId') : '';
+            String expiryDate = data.containsKey('expiryDate') ? (String) data.get('expiryDate') : (data.containsKey('validUntil') ? (String) data.get('validUntil') : null);
+
+            if (mainSetting == null) {
+                mainSetting = new scArch_Admin_Config__c(Name = 'Default');
+            }
+
+            mainSetting.Product_Key__c = productKey;
+            mainSetting.Registered_User_Id__c = userId;
+            mainSetting.Registered_Password__c = password;
+            mainSetting.Registration_Status__c = 'Registered';
+            if (expiryDate != null) {
+                mainSetting.Subscription_Expiry__c = expiryDate;
+            }
+            upsert mainSetting;
+
+            Map<String, Object> result = new Map<String, Object>();
+            result.put('status', 'success');
+            result.put('registrationStatus', 'Registered');
+            result.put('productKey', productKey);
+            result.put('instanceId', instanceId);
+            result.put('message', 'Organization registered successfully.');
+            if (expiryDate != null) {
+                result.put('expiryDate', expiryDate);
+            }
+            return result;
+
+        } catch (AuraHandledException e) {
+            throw e;
+        } catch (Exception e) {
+            System.debug('Error during registration: ' + e.getMessage() + ' ' + e.getStackTraceString());
+            throw new AuraHandledException('An error occurred during registration: ' + e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static Map<String, Object> renewSubscription(String productKey) {
+        try {
+            if (String.isBlank(productKey)) {
+                throw new AuraHandledException('Product key is required for renewal.');
+            }
+
+            // Get organization information and named credential
+            Organization org = [
+                SELECT Id
+                FROM Organization
+                LIMIT 1
+            ];
+
+            scArch_Admin_Config__c mainSetting = scArch_Admin_Config__c.getInstance('Default');
+            String namedCredential = mainSetting != null ? mainSetting.Named_Credential__c : null;
+
+            if (String.isBlank(namedCredential)) {
+                throw new AuraHandledException('Named Credential must be configured before subscription renewal.');
+            }
+
+            // Build request payload for key validation
+            Map<String, Object> payload = new Map<String, Object>{
+                'orgId' => org.Id,
+                'productKey' => productKey
+            };
+
+            // Make the callout to the validation endpoint
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint('callout:' + namedCredential + '/init/validatekey');
+            request.setMethod('POST');
+            request.setHeader('Content-Type', 'application/json');
+            request.setBody(JSON.serialize(payload));
+
+            Http http = new Http();
+            HttpResponse response = http.send(request);
+
+            if (response.getStatusCode() < 200 || response.getStatusCode() >= 300) {
+                throw new AuraHandledException('Key validation failed with status ' + response.getStatusCode());
+            }
+
+            // Parse response
+            Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+
+            if (responseBody == null || !responseBody.containsKey('status')) {
+                throw new AuraHandledException('Invalid response from key validation.');
+            }
+
+            String status = String.valueOf(responseBody.get('status')).toLowerCase();
+
+            if (status == 'error') {
+                String errorMessage = responseBody.containsKey('message')
+                    ? String.valueOf(responseBody.get('message'))
+                    : 'Invalid or expired Product Key.';
+                throw new AuraHandledException(errorMessage);
+            }
+
+            if (status != 'success') {
+                throw new AuraHandledException('Key validation returned an unexpected status.');
+            }
+
+            // Update the product key in settings
+            if (mainSetting == null) {
+                mainSetting = new scArch_Admin_Config__c(Name = 'Default');
+            }
+
+            mainSetting.Product_Key__c = productKey;
+            mainSetting.Registration_Status__c = 'Renewed';
+            String expiryDate = responseBody.containsKey('expiryDate')
+                ? String.valueOf(responseBody.get('expiryDate'))
+                : responseBody.containsKey('validUntil')
+                    ? String.valueOf(responseBody.get('validUntil'))
+                    : null;
+            if (expiryDate != null) {
+                mainSetting.Subscription_Expiry__c = expiryDate;
+            }
+            upsert mainSetting;
+
+            // Build response
+            Map<String, Object> result = new Map<String, Object>();
+            result.put('registrationStatus', 'Renewed');
+            result.put('message', responseBody.containsKey('message') 
+                ? String.valueOf(responseBody.get('message'))
+                : 'Subscription successfully renewed.');
+            if (expiryDate != null) {
+                result.put('expiryDate', expiryDate);
+            }
+            result.put('licenseStatus', responseBody.get('licenseStatus'));
+            result.put('validUntil', responseBody.get('validUntil'));
+            if (expiryDate != null) {
+                result.put('expiryDate', expiryDate);
+            }
+
+            return result;
+
+        } catch (AuraHandledException e) {
+            throw e;
+        } catch (Exception e) {
+            System.debug('Error during subscription renewal: ' + e.getMessage());
+            throw new AuraHandledException('An error occurred during subscription renewal: ' + e.getMessage());
+        }
+    }
+}

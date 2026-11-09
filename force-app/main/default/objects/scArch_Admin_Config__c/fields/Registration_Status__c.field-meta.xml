@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Registration_Status__c</fullName>
+    <label>Registration Status</label>
+    <type>Text</type>
+    <length>100</length>
+    <inlineHelpText>Status returned by the registration or renewal process.</inlineHelpText>
+</CustomField>

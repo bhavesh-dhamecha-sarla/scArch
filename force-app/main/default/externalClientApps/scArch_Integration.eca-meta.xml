@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExternalClientApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contactEmail>bhavesh.dhamecha@sarlaconsulting.com</contactEmail>
+    <distributionState>Local</distributionState>
+    <isProtected>false</isProtected>
+    <label>scArch Integration</label>
+    <orgScopedExternalApp>00DOy00000Nq5Pl:scArch_Integration</orgScopedExternalApp>
+</ExternalClientApplication>
